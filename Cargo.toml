@@ -1,0 +1,13 @@
+[package]
+name = "yarax_android"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+jni = "0.21.1"
+serde_json = "1.0.149"
+yara-x = { version = "1.15.0", default-features = false, features = ["dex-module", "hash-module", "crypto", "linkme", "pe-module", "elf-module"]}
+
+[lib]
+name = "yarax_android"
+crate-type = ["cdylib"]

@@ -6,7 +6,7 @@ edition = "2024"
 [dependencies]
 jni = "0.21.1"
 serde_json = "1.0.149"
-yara-x = { vpath = "./yarax_patches/yara-x/lib", default-features = false, features = ["dex-module", "hash-module", "crypto", "inventory", "pe-module", "elf-module"]}
+yara-x = { path = "./yarax_patches/yara-x/lib", default-features = false, features = ["dex-module", "hash-module", "crypto", "pe-module", "elf-module", "generate-proto-code"]}
 
 [lib]
 name = "yarax_android"

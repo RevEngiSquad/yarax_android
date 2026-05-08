@@ -3,3 +3,4 @@
 /target
 jniLibs/
 *.so
+/yarax_patches/yara-x/

@@ -36,6 +36,7 @@ tasks.register<Exec>("cargoNdkBuild") {
         "cargo", "ndk",
         "--target", "arm64-v8a",
         "--target", "armeabi-v7a",
+        "--target", "x86_64",
         "--output-dir", "jniLibs",
         "build", "--release"
     )

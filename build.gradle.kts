@@ -25,12 +25,18 @@ android {
 
 // Requires: cargo-ndk (`cargo install cargo-ndk`) + Android NDK.
 // Usage:  ./gradlew :yarax_android:cargoNdkBuild
-//
-// This is NOT required for every build — the pre-built libs in jniLibs/
-// are already packaged into the AAR. Run this only when the Rust code changes.
 tasks.register<Exec>("cargoNdkBuild") {
     group = "rust"
     description = "Cross-compile Rust JNI lib for Android via cargo-ndk"
+
+    inputs.files(
+        fileTree("${projectDir}/src") { include("**/*.rs") },
+        file("${projectDir}/Cargo.toml"),
+        file("${projectDir}/Cargo.lock"),
+        file("${projectDir}/build.rs")
+    )
+    outputs.dir("${projectDir}/jniLibs")
+
     workingDir = projectDir
     commandLine(
         "cargo", "ndk",

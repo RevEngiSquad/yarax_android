@@ -23,9 +23,18 @@ android {
     }
 }
 
-// Requires: cargo-ndk (`cargo install cargo-ndk`) + Android NDK.
-// Usage:  ./gradlew :yarax_android:cargoNdkBuild
-tasks.register<Exec>("cargoNdkBuild") {
+val ndkTargets = (project.properties["yarax.ndk.targets"] as? String)?.split(",")?.map { it.trim() }
+    ?: (project.properties["target-platform"] as? String)?.split(",")?.mapNotNull {
+        when (it.trim()) {
+            "android-arm" -> "armeabi-v7a"
+            "android-arm64" -> "arm64-v8a"
+            "android-x64" -> "x86_64"
+            else -> null
+        }
+    }
+    ?: listOf("arm64-v8a", "armeabi-v7a", "x86_64")
+
+val cargoNdkBuild by tasks.registering(Exec::class) {
     group = "rust"
     description = "Cross-compile Rust JNI lib for Android via cargo-ndk"
 
@@ -39,11 +48,16 @@ tasks.register<Exec>("cargoNdkBuild") {
 
     workingDir = projectDir
     commandLine(
-        "cargo", "ndk",
-        "--target", "arm64-v8a",
-        "--target", "armeabi-v7a",
-        "--target", "x86_64",
-        "--output-dir", "jniLibs",
-        "build", "--release"
+        listOf("cargo", "ndk") +
+            ndkTargets.flatMap { listOf("--target", it) } +
+            listOf("--output-dir", "jniLibs", "build", "--release")
     )
+
+    doFirst {
+        file("${projectDir}/jniLibs").deleteRecursively()
+    }
+}
+
+tasks.matching { it.name.startsWith("merge") && it.name.endsWith("JniLibFolders") }.configureEach {
+    dependsOn(cargoNdkBuild)
 }
